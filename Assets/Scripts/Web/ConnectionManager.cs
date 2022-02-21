@@ -584,6 +584,14 @@ public class CloudAPI
 
         if (!response.IsSuccessStatusCode)
         {
+            //Try from local
+            string jsonFile = $"./wise/{routeAndParams}";
+            jsonFile = jsonFile.Replace("?", "_").Replace("=", "-").Replace("&", "+");
+            if (File.Exists(jsonFile))
+            {
+                string jsonString = System.IO.File.ReadAllText(jsonFile);
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<ApiModelType>(jsonString);
+            }
             throw new NoSuccessException(response.StatusCode.ToString(), response.StatusCode);
         }
         using (var stream = await response.Content.ReadAsStreamAsync())
@@ -591,6 +599,17 @@ public class CloudAPI
             using (var reader = new StreamReader(stream))
             {
                 var jsonString = await reader.ReadToEndAsync();
+
+                Console.WriteLine($"DEBUG json body for {routeAndParams}:\n {jsonString} ");
+
+                string jsonFile = $"./wise/{routeAndParams}";
+                jsonFile = jsonFile.Replace("?","_").Replace("=","-").Replace("&","+");
+                Directory.CreateDirectory(Path.GetDirectoryName(jsonFile));
+                using (var fileStream = File.CreateText(jsonFile))
+                {
+                    fileStream.WriteLine(jsonString);
+                    fileStream.Close();
+                }
                 return Newtonsoft.Json.JsonConvert.DeserializeObject<ApiModelType>(jsonString);
             }
         }

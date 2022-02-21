@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using UnityEngine;
 
 public class VehicleSMI : MonoBehaviour, IVehicleDynamics
@@ -137,10 +138,106 @@ public class VehicleSMI : MonoBehaviour, IVehicleDynamics
 
     private IAgentController Controller;
 
+
+    private void setVariables()
+    {
+
+        var configFile = System.Environment.CurrentDirectory+"/vehicle-dynamics-config.txt";
+
+        // Log.Info("Set vehicle dynamics variables : " + currentDateTime + ", from: "+ configFile);
+
+        Dictionary<string, float> vehichleDynamicsMap = new Dictionary<string, float>();
+
+        var hasValues = false;
+        if (File.Exists(@configFile))
+        {
+            //read sensors placement from file
+            string vehichleDynamicsContet = System.IO.File.ReadAllText(@configFile);
+
+            string[] lines = vehichleDynamicsContet.Split('\n');
+            foreach (string line in lines)
+            {
+                if (!line.Contains("//") && line.Trim().Length>0)
+                {
+                    hasValues=true;
+                    var entry = line.Split('=');
+                    vehichleDynamicsMap[entry[0].Trim()] = float.Parse((entry[1].Split('f')[0].Trim()));
+                }
+            }
+        }
+
+        if(hasValues)
+        {
+            RB.mass = vehichleDynamicsMap["RB.mass"]; //600f;
+            RB.drag = vehichleDynamicsMap["RB.drag"]; //0.2f;
+            RB.angularDrag = vehichleDynamicsMap["RB.angularDrag"]; //0.2f;
+
+            //public Vector3 CenterOfMass = new Vector3(0f, 0.35f, 0f);
+
+            //[Tooltip("torque at peak of torque curve")]
+            MaxMotorTorque = vehichleDynamicsMap["MaxMotorTorque"]; //1600f;
+
+            //[Tooltip("torque at max brake")]
+            MaxBrakeTorque = vehichleDynamicsMap["MaxBrakeTorque"]; //3000f;
+
+            //[Tooltip("steering range is +-maxSteeringAngle")]
+            _MaxSteeringAngle = vehichleDynamicsMap["_MaxSteeringAngle"]; //39.4f;
+
+            //[Tooltip("idle rpm")]
+            MinRPM = vehichleDynamicsMap["MinRPM"]; //1600f;
+
+            //[Tooltip("max rpm")]
+            MaxRPM = vehichleDynamicsMap["MaxRPM"]; //8000f;
+
+            //[Tooltip("gearbox ratios")]
+            GearRatios = new float[] {2.9167f, 1.875f, 1.3809f, 1.1154f, 0.96f, 0.8889f };
+            FinalDriveRatio = vehichleDynamicsMap["FinalDriveRatio"]; //3f;
+
+            //[Tooltip("min time between gear changes")]
+            ShiftDelay = vehichleDynamicsMap["ShiftDelay"]; //0.01f;
+
+            //[Tooltip("time interpolated for gear shift")]
+            ShiftTime = vehichleDynamicsMap["ShiftTime"]; //0.01f;
+
+            //[Tooltip("torque curve that gives torque at specific percentage of max RPM")]
+            //public AnimationCurve RPMCurve;
+            //[Tooltip("curves controlling whether to shift up at specific rpm, based on throttle position")]
+            //public AnimationCurve ShiftUpCurve;
+            //[Tooltip("curves controlling whether to shift down at specific rpm, based on throttle position")]
+            //public AnimationCurve ShiftDownCurve;
+
+            //[Tooltip("Air Drag Coefficient")]
+            AirDragCoeff = vehichleDynamicsMap["AirDragCoeff"]; //0.2f;
+            //[Tooltip("Air Downforce Coefficient")]
+            AirDownForceCoeff = vehichleDynamicsMap["AirDownForceCoeff"]; //0.2f;
+            //[Tooltip("Tire Drag Coefficient")]
+            TireDragCoeff = vehichleDynamicsMap["TireDragCoeff"]; //0.2f;
+
+            //[Tooltip("wheel collider damping rate")]
+            WheelDamping = vehichleDynamicsMap["WheelDamping"]; //1f;
+
+            //[Tooltip("autosteer helps the car maintain its heading")]
+            //[Range(0, 1)]
+            AutoSteerAmount = vehichleDynamicsMap["AutoSteerAmount"]; //0.1f;
+
+            //[Tooltip("traction control limits torque based on wheel slip - traction reduced by amount when slip exceeds the tractionControlSlipLimit")]
+            //[Range(0, 1)]
+            TractionControlAmount = vehichleDynamicsMap["TractionControlAmount"]; //0.675f;
+            TractionControlSlipLimit = vehichleDynamicsMap["TractionControlSlipLimit"]; //0.8f;
+
+            //[Tooltip("how much to smooth out real RPM")]
+            RPMSmoothness = vehichleDynamicsMap["RPMSmoothness"]; //5f;
+
+        }
+
+    }
+
     public void Awake()
     {
         RB = GetComponent<Rigidbody>();
         Controller = GetComponent<IAgentController>();
+
+        setVariables();//set custom config
 
         RB.centerOfMass = CenterOfMass;
         NumberOfDrivingWheels = Axles.Where(a => a.Motor).Count() * 2;

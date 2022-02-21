@@ -939,6 +939,15 @@ public class UIManager : MonoBehaviour
             return;
 
         CurrentTimeSpan = SimulatorManager.Instance.GetSessionElapsedTimeSpan();
-        SimTimeText.text = string.Format("{0:00}:{1:00}:{2:00}:{3:00}", CurrentTimeSpan.Hours, CurrentTimeSpan.Minutes, CurrentTimeSpan.Seconds, CurrentTimeSpan.Milliseconds/10);
+        if (FPSText != null)
+        {
+            SimTimeText.text = string.Format("{4,3} {0:00}:{1:00}:{2:00}:{3:00}", CurrentTimeSpan.Hours, CurrentTimeSpan.Minutes, CurrentTimeSpan.Seconds, CurrentTimeSpan.Milliseconds / 10, FPSText.text);
+        }
+
+        else
+        {
+            SimTimeText.text = string.Format("{0:00}:{1:00}:{2:00}:{3:00}", CurrentTimeSpan.Hours, CurrentTimeSpan.Minutes, CurrentTimeSpan.Seconds, CurrentTimeSpan.Milliseconds / 10);
+        }
+
     }
 }

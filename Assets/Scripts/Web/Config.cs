@@ -42,7 +42,8 @@ namespace Simulator.Web
 
         public static string Root;
         public static string PersistentDataPath;
-
+        public static string SimulationID;
+    
         public static List<Manifest> LoadedAssets = new List<Manifest>();
         public static List<SensorBase> SensorPrefabs;
         public static List<SensorConfig> Sensors;

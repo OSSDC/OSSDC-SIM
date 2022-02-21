@@ -535,19 +535,92 @@ public class SensorsController : MonoBehaviour, ISensorsController, IMessageSend
         }
 
         var sensorsData = sensorsInstances.Select(s => s.Value.Configuration);
-        var allSensors = JsonConvert.SerializeObject(sensorsData, JsonSettings.camelCase);
-        var sensorsLength = BytesStack.GetMaxByteCount(allSensors);
+        var allSensorsOrig = JsonConvert.SerializeObject(sensorsData, JsonSettings.camelCase);
+        var sensorsLengthOrig = BytesStack.GetMaxByteCount(allSensorsOrig);
+
+        DateTimeOffset value = DateTimeOffset.Now;
+
+        // Display date using each of the specified formats.
+        var fmtString = "u"; //  u --> 2012-11-19 18:57:11Z
+        var currentDateTime = value.ToString(fmtString);
         //Send sensors data to clients
+
+        var configFile = System.Environment.CurrentDirectory+"/sensors-placement.txt";
+
+        Log.Info("Send sensors data to clients at: " + currentDateTime + ", from: "+ configFile);
+
+        var sensrosPlacementEntries = new ArrayList();
+
+        if (File.Exists(@configFile))
+        {
+            //read sensors placement from file
+            string sensrosPlacementContent = System.IO.File.ReadAllText(@configFile);
+
+            string[] sensrosPlacementLines = sensrosPlacementContent.Split('\n');
+            foreach (string line in sensrosPlacementLines)
+            {
+                if (!line.Contains('#') && line.Contains('|'))
+                {
+                    var entry = line.Split('|');
+                    sensrosPlacementEntries.Add(entry);
+                }
+            }
+        }
+
         for (var i = 0; i < clientsCount; i++)
         {
             var client = network.Master.Clients[i];
-            var enabledSensors = JsonConvert.SerializeObject(clientsSensors[client.Peer], JsonSettings.camelCase);
+
+            // Type t = client.GetType(); // Where obj is object whose properties you need.
+            // PropertyInfo [] pi = t.GetProperties();
+            // foreach (PropertyInfo p in pi)
+            // {
+            //      Log.Info(p.Name + " : " + p.GetValue(client));
+            // }
+
+            //var enabledSensors = JsonConvert.SerializeObject(clientsSensors[client.Peer], JsonSettings.camelCase);
+            List<string> clientSensorsList = clientsSensors[client.Peer];
+            var allSensors = allSensorsOrig;
+            var sensorsLength = sensorsLengthOrig;
+
+            foreach (string[] entry in sensrosPlacementEntries) {
+                if (client.Peer.Identifier == entry[0]) {
+                    string[] sensors = entry[1].Split(',');
+                    clientSensorsList = sensors.ToList<string>();
+                    if (entry.Length > 2)
+                    {
+                        allSensors = entry[2];
+                        sensorsLength = BytesStack.GetMaxByteCount(allSensors);
+                    }
+                    break; //use always first entry
+                }
+            }
+
+            // if (client.Peer.Identifier == "ANDRE-DESKTOP-2021-dev")
+            // {
+            //     // var myArray = new[] { "Lidar A", "Lidar B", "Lidar C" };
+            //     var myArray = new[] { "Lidar A", "Lidar B", "Lidar C" };
+            //     clientSensorsList = myArray.ToList<string>();
+            // }
+            // else if (client.Peer.Identifier == "focus-2021-2-1")
+            // {
+            //     // var myArray = new[] { "Camera Front 1", "Camera Front 2", "Camera Front Right", "Camera Front Left", "Camera Rear Right", "Camera Rear Left" };
+            //     var myArray = new[] { "Camera Front Right", "Camera Front Left", "Camera Rear Right", "Camera Rear Left" };                
+            //     clientSensorsList = myArray.ToList<string>();
+            // }
+
+            var enabledSensors = JsonConvert.SerializeObject(clientSensorsList, JsonSettings.camelCase);
+
             var message = MessagesPool.Instance.GetMessage(sensorsLength + BytesStack.GetMaxByteCount(enabledSensors));
             message.AddressKey = Key;
+
+
             message.Content.PushString(enabledSensors);
             message.Content.PushString(allSensors);
             message.Type = DistributedMessageType.ReliableOrdered;
+            Log.Info("Client indentifier : "+client.Peer.Identifier+"\nEnable: "+enabledSensors+"\nAll: "+allSensors);
             ((IMessageSender)this).UnicastMessage(client.Peer.PeerEndPoint, message);
+
         }
 
         SensorsChanged?.Invoke();

@@ -10,6 +10,7 @@ using System.Linq;
 using Simulator.Database.Services;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 namespace Simulator.Web
 {
@@ -86,8 +87,19 @@ namespace Simulator.Web
             UpdateStatus(ConnectionManager.Status, "");
             TaskProgressManager.Instance.OnUpdate += UpdateDownloadProgress;
             ConnectionManager.OnStatusChanged += UpdateStatus;
+            if (Config.SimulationID != null)
+            {
+                _ = StartSimulation(Config.SimulationID);
+            }
         }
 
+        async Task StartSimulation(string simulationID)
+        {
+            //await new WaitForSeconds(3.0f);
+            await Task.Delay(5000);
+            selectedSim = int.Parse(simulationID);
+            OnOfflineStartButtonClicked();
+        }
         public void UpdateDownloadProgress()
         {
             var text = string.Empty;
