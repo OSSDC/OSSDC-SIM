@@ -31,10 +31,10 @@ namespace Simulator.Web
         public static string ApiHost = "localhost";
         public static int ApiPort = 8181;
 
-        public static string CloudUrl = "https://wise.svlsimulator.com";
+        public static string CloudUrl = "https://race.ossdc.org";
         public static string CloudProxy;
         public static string SessionGUID;
-        public static string SimID;
+        public static string SimID = "2021_3-ossdc";
 
         public static bool Headless = false;
 

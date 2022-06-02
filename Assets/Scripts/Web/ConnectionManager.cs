@@ -354,8 +354,10 @@ public class ConnectionManager : MonoBehaviour
         switch (Status)
         {
             case ConnectionStatus.Offline:
-                RunConnectTask();
-                service.UpdateOnlineStatus(true);
+                if (Config.CloudUrl.Contains("wise")){
+                    RunConnectTask();
+                    service.UpdateOnlineStatus(true);
+                }
                 break;
             case ConnectionStatus.Connecting:
             case ConnectionStatus.Connected:
