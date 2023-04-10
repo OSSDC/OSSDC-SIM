@@ -30,16 +30,18 @@
 
 # Project specific
 /AssetBundles/
-/Assets/External/Environments/
-/Assets/External/Vehicles/
-/Assets/External/Sensors/
-/Assets/External/Controllables/
-/Assets/External/NPCs/
-/Assets/External/Pedestrians/
-/Assets/External/Restricted/
-/Assets/External/Restricted.meta
-/Assets/External/Tests/
-/Assets/External/Tests.meta
+/Assets/dlls/*
+/Assets/External/*
+# /Assets/External/Environments/
+# /Assets/External/Vehicles/
+# /Assets/External/Sensors/
+# /Assets/External/Controllables/
+# /Assets/External/NPCs/
+# /Assets/External/Pedestrians/
+# /Assets/External/Restricted/
+# /Assets/External/Restricted.meta
+# /Assets/External/Tests/
+# /Assets/External/Tests.meta
 /Assets/External/Bridges/
 /Assets/Resources/BuildInfo.asset*
 /Assets/Resources/Database/default*
@@ -58,3 +60,5 @@
 /heu_settings.ini
 **/HoudiniEngineUnity/
 **/HoudiniEngineUnity.meta
+
+Assets/External/AiRacingTech

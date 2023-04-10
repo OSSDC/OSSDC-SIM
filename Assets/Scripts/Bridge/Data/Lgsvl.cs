@@ -17,6 +17,8 @@ namespace Simulator.Bridge.Data.Lgsvl
         GEAR_REVERSE = 2,
         GEAR_PARKING = 3,
         GEAR_LOW = 4,
+        GEAR_MIDDLE = 5,
+        GEAR_HIGH = 6,
     }
 
     public enum BlinkerState: byte

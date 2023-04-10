@@ -31,6 +31,7 @@ namespace Simulator.Sensors
         public Transform BaseLinkTransform;
 
         public float AccellInput { get; set; } = 0f;
+        public float BrakeInput { get; set; } = 0f;
         public float SteerInput { get; set; } = 0f;
         public bool HandBrake { get; set; } = false;
         public float CurrentRPM { get; set; } = 0f;
@@ -200,7 +201,7 @@ namespace Simulator.Sensors
             if (Controller != null)
             {
                 SteerInput = Controller.SteerInput;
-                AccellInput = Controller.AccelInput;
+                AccellInput = Controller.AccelInput - Controller.BrakeInput;
             }
 
             if (HandBrake)

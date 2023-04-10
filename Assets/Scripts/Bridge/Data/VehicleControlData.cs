@@ -16,6 +16,8 @@ namespace Simulator.Bridge.Data
         Reverse,
         Parking,
         Low,
+        Middle,
+        High
     };
 
     public class VehicleControlData

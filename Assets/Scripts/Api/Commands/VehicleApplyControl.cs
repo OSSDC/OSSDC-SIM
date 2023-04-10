@@ -39,7 +39,7 @@ namespace Simulator.Api.Commands
                     api.SendError(this, $"{nameof(IVehicleActions)} component not found in agent '{uid}'.");
                     return;
                 }
-                
+
                 if (vd == null)
                 {
                     api.SendError(this, $"{nameof(IVehicleDynamics)} component not found in agent '{uid}'.");
@@ -50,7 +50,8 @@ namespace Simulator.Api.Commands
                 var throttle = control["throttle"].AsFloat;
                 var braking = control["braking"].AsFloat;
 
-                vc.ApplyControl(sticky, steering, throttle - braking);
+                // TODO(dvd): Update ApplyControl to include gear.
+                vc.ApplyControl(sticky, steering, throttle, braking);
 
                 var reverse = control["reverse"].AsBool;
 

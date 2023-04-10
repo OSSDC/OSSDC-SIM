@@ -12,6 +12,7 @@ using System.Linq;
 using System.IO;
 using UnityEngine;
 
+
 public class VehicleSMI : MonoBehaviour, IVehicleDynamics
 {
     private Rigidbody RB;
@@ -22,6 +23,7 @@ public class VehicleSMI : MonoBehaviour, IVehicleDynamics
     public Transform BaseLinkTransform;
 
     public float AccellInput { get; set; } = 0f;
+    public float BrakeInput { get; set; } = 0f;
     public float SteerInput { get; set; } = 0f;
 
     public bool HandBrake { get; set; } = false;
@@ -249,9 +251,17 @@ public class VehicleSMI : MonoBehaviour, IVehicleDynamics
             axle.Left.wheelDampingRate = WheelDamping;
             axle.Right.wheelDampingRate = WheelDamping;
         }
+
     }
 
-    private void Update()
+
+    // Start is called before the first frame update
+    void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         UpdateWheelVisuals();
     }
@@ -625,7 +635,7 @@ public class VehicleSMI : MonoBehaviour, IVehicleDynamics
         if (Controller != null)
         {
             SteerInput = Controller.SteerInput;
-            AccellInput = Controller.AccelInput;
+            AccellInput = Controller.AccelInput - Controller.BrakeInput;
         }
 
         if (HandBrake)

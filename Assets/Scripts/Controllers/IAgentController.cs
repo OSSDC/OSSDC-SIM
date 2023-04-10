@@ -33,6 +33,6 @@ public interface IAgentController : ITriggerAgent
     void ResetSavedPosition(Vector3 pos, Quaternion rot);
     void Init();
 
-    void ApplyControl(bool sticky, float steering, float acceleration);
+    void ApplyControl(bool sticky, float steering, float acceleration, float braking);
     void DisableControl();
 }

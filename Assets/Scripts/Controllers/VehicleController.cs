@@ -22,6 +22,8 @@ public class VehicleController : AgentController
     private Vector3 SimpleVelocity;
     private Vector3 SimpleAcceleration;
 
+    public int TargetGear;
+
     public override Vector3 Velocity => SimpleVelocity;
     public override Vector3 Acceleration => SimpleAcceleration;
 
@@ -32,7 +34,8 @@ public class VehicleController : AgentController
     // api do not remove
     private bool Sticky = false;
     private float StickySteering;
-    private float StickAcceleraton;
+    private float StickyAcceleration;
+    private float StickyBraking;
 
     public void Update()
     {
@@ -79,11 +82,12 @@ public class VehicleController : AgentController
             SteerInput += input.SteerInput;
             AccelInput += input.AccelInput;
             BrakeInput += input.BrakeInput;
+            TargetGear = input.TargetGear;
         }
 
         // clamp if over
         SteerInput = Mathf.Clamp(SteerInput, -1f, 1f);
-        AccelInput = Mathf.Clamp(AccelInput, -1f, 1f);
+        AccelInput = Mathf.Clamp01(AccelInput);
         BrakeInput = Mathf.Clamp01(BrakeInput); // TODO use for all input types just wheel now
     }
 
@@ -95,7 +99,8 @@ public class VehicleController : AgentController
         }
 
         SteerInput = StickySteering;
-        AccelInput = StickAcceleraton;
+        AccelInput = StickyAcceleration;
+        BrakeInput = StickyBraking;
     }
 
     private void UpdateLights()
@@ -178,11 +183,12 @@ public class VehicleController : AgentController
     }
 
     // api
-    public override void ApplyControl(bool sticky, float steering, float acceleration)
+    public override void ApplyControl(bool sticky, float steering, float acceleration, float braking)
     {
         this.Sticky = sticky;
         StickySteering = steering;
-        StickAcceleraton = acceleration;
+        StickyAcceleration = acceleration;
+        StickyBraking = braking;
     }
 
     public void ResetStickyControl()

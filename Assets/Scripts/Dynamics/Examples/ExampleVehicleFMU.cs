@@ -20,6 +20,7 @@ namespace Simulator.FMU
         public Transform BaseLinkTransform;
 
         public float AccellInput { get; set; } = 0f;
+        public float BrakeInput { get; set; } = 0f;
         public float SteerInput { get; set; } = 0f;
 
         public bool HandBrake { get; set; } = false;
@@ -215,7 +216,7 @@ namespace Simulator.FMU
             if (Controller != null)
             {
                 SteerInput = Controller.SteerInput;
-                AccellInput = Controller.AccelInput;
+                AccellInput = Controller.AccelInput - Controller.BrakeInput;
             }
 
             if (HandBrake)

@@ -16,6 +16,7 @@ public interface IVehicleDynamics
     Transform BaseLink { get; }
 
     float AccellInput { get; }
+    float BrakeInput { get; }
     float SteerInput { get; }
 
     bool HandBrake { get; }

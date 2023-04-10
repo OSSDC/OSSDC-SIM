@@ -11,4 +11,5 @@ public interface IVehicleInputs
     float SteerInput { get; }
     float AccelInput { get; }
     float BrakeInput { get; }
+    int TargetGear { get; }
 }

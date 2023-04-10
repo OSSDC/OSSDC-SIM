@@ -24,6 +24,7 @@ public class VehicleLaneFollowSMI : MonoBehaviour, IVehicleDynamics
     public Transform BaseLink { get { return BaseLinkTransform; } }
     public Transform BaseLinkTransform;
     public float AccellInput { get; set; } = 0f;
+    public float BrakeInput { get; set; } = 0f;
     public float SteerInput { get; set; } = 0f;
     public bool HandBrake { get; set; } = false;
     public float CurrentRPM { get; set; } = 0f;

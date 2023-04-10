@@ -71,7 +71,7 @@ public abstract class AgentController : MonoBehaviour, IAgentController
     public abstract void ResetSavedPosition(Vector3 pos, Quaternion rot);
     public abstract void Init();
 
-    public abstract void ApplyControl(bool sticky, float steering, float acceleration);
+    public abstract void ApplyControl(bool sticky, float steering, float acceleration, float braking);
 
     public virtual void DisableControl()
     {
